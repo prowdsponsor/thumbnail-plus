@@ -40,6 +40,13 @@ description:
 library
   exposed-modules:
     Graphics.ThumbnailPlus
-  build-depends:       base >=4.6 && <4.7
+  other-modules:
+    Graphics.ThumbnailPlus.ImageSize
+  build-depends:
+    base       >= 4.6,
+    bytestring >= 0.10,
+    conduit    >= 1.0,
+    gd         >= 3000.7.3
   hs-source-dirs:      src
   default-language:    Haskell2010
+  ghc-options:         -Wall
