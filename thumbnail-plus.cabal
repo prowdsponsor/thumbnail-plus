@@ -29,10 +29,9 @@ description:
    * Optionally, the original image is reencoded before being
      saved.
   .
-   * The images are processed using the
-     <http://libgd.bitbucket.org/ GD library>,
-     which is heavily battle-tested and audited by many pairs
-     of eyeballs.
+   * The images are processed using the <http://libgd.bitbucket.org/ GD library>,
+     which is heavily battle-tested and
+     <http://www.cvedetails.com/vulnerability-list/vendor_id-2678/Gd-Graphics-Library.html audited by many pairs of eyeballs>.
   .
   Please report any vulnerabilities you may find, we take strive
   to make this library suitable for processing arbitrary images.
@@ -43,10 +42,20 @@ library
   other-modules:
     Graphics.ThumbnailPlus.ImageSize
   build-depends:
-    base       >= 4.6,
-    bytestring >= 0.10,
-    conduit    >= 1.0,
-    gd         >= 3000.7.3
+    base         >= 4.6,
+    bytestring   >= 0.10,
+    data-default >= 0.5,
+
+    transformers >= 0.3,
+    either       >= 4.1,
+
+    conduit      >= 1.0,
+    resourcet    >= 0.4,
+
+    directory,
+    temporary    >= 1.2,
+
+    gd           >= 3000.7.3
   hs-source-dirs:      src
   default-language:    Haskell2010
   ghc-options:         -Wall
