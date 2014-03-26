@@ -1,0 +1,3 @@
+module Graphics.ThumbnailPlus
+  (
+  ) where
