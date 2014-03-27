@@ -7,6 +7,7 @@ module Graphics.ThumbnailPlus
   , FileFormat(..)
   , CreatedThumbnails(..)
   , Thumbnail(..)
+  , NoShow(..)
   ) where
 
 import Control.Arrow ((***))
@@ -20,6 +21,7 @@ import qualified Control.Exception as E
 import qualified Control.Monad.Trans.Resource as R
 import qualified Data.Conduit as C
 import qualified Data.Conduit.Binary as CB
+import qualified Data.Typeable as T
 import qualified Graphics.GD as GD
 import qualified System.Directory as D
 import qualified System.IO as IO
@@ -145,7 +147,7 @@ doCreateThumbnails Configuration {..} (inputFp, inputSize, inputFf) = do
         thumbnailSizes
   thumbnails <- mapM (createThumbnail tmpDir img) finalThumbSizes
   R.release relImg
-  return (CreatedThumbnails thumbnails relTmpDir)
+  return (CreatedThumbnails thumbnails (NoShow relTmpDir))
 
 createThumbnail
   :: R.MonadResource m
@@ -177,7 +179,7 @@ createThumbnail tmpDir inputImg (size@(Size w h), ff) = do
   return Thumbnail { thumbFp         = tmpFp
                    , thumbSize       = size
                    , thumbFormat     = ff
-                   , thumbReleaseKey = relTmpFile
+                   , thumbReleaseKey = NoShow relTmpFile
                    }
 
 -- | For some reason, the @gd@ library does not export
@@ -199,10 +201,11 @@ data CreatedThumbnails =
   | ImageFormatUnrecognized
     -- ^ Could not parse size information for the image.
     -- Remember that we understand JPGs, PNGs and GIFs only.
-  | CreatedThumbnails ![Thumbnail] !R.ReleaseKey
+  | CreatedThumbnails ![Thumbnail] !(NoShow R.ReleaseKey)
     -- ^ Thumbnails were created successfully.  If
     -- 'reencodeOriginal' was not 'Never', then the first item of
     -- the list is going to be the reencoded image.
+  deriving (Eq, Show)
 
 
 -- | Information about a generated thumbnail.  Note that if ask
@@ -215,8 +218,20 @@ data Thumbnail =
     , thumbSize :: !Size
       -- ^ Size of the thumbnail.
     , thumbFormat :: !FileFormat
-    , thumbReleaseKey :: !R.ReleaseKey
+    , thumbReleaseKey :: !(NoShow R.ReleaseKey)
       -- ^ Release key that may be used to clean up any resources
       -- used by this thumbnail as soon as possible (i.e., before
       -- 'R.runResourceT' finishes).
-    }
+    } deriving (Eq, Show)
+
+
+-- | Hack to allow me to derive 'Show' for data types with fields
+-- that don't have 'Show' instances.
+newtype NoShow a = NoShow a
+
+instance T.Typeable a => Show (NoShow a) where
+  showsPrec _ ~(NoShow a) =
+    ('<':) . T.showsTypeRep (T.typeOf a) . ('>':)
+
+instance Eq (NoShow a) where
+  _ == _ = True
