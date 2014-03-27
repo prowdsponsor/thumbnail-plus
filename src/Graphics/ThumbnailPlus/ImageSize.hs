@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 -- | Detect the image size without opening the image itself.
 --
 -- Amazingly, reimplementing this wheel is the recommended way of
@@ -22,15 +23,16 @@ import qualified Data.Conduit.Binary as CB
 import qualified Data.ByteString as S
 import Data.ByteString.Char8 ()
 import Data.ByteString.Lazy.Char8 ()
+import qualified Data.Typeable as T
 import Control.Applicative ((<$>), (<*>))
 
 
 data Size = Size { width :: Int, height :: Int }
-  deriving (Show, Eq, Ord, Read)
+  deriving (Show, Eq, Ord, Read, T.Typeable)
 
 
 data FileFormat = GIF | PNG | JPG
-  deriving (Show, Eq, Ord, Read, Enum)
+  deriving (Show, Eq, Ord, Read, Enum, T.Typeable)
 
 
 -- | Find out the size of an image.  Also returns the file format

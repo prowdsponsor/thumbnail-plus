@@ -1,4 +1,5 @@
-{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveDataTypeable,
+             RecordWildCards #-}
 module Graphics.ThumbnailPlus
   ( createThumbnails
   , Configuration(..)
@@ -52,7 +53,7 @@ data Configuration =
     , temporaryDirectory :: IO FilePath
       -- ^ Temporary directory where files should be
       -- saved. Default: 'D.getTemporaryDirectory'.
-    }
+    } deriving (T.Typeable)
 
 instance Default Configuration where
   def = Configuration
@@ -72,7 +73,7 @@ data ReencodeOriginal =
     -- ^ Reencode the original using the same file format.
   | NewFileFormat !FileFormat
     -- ^ Reencode the original using the given file format.
-    deriving (Eq, Ord, Show)
+    deriving (Eq, Ord, Show, T.Typeable)
 
 
 -- | cf. 'thumbnailSizes'.
@@ -205,7 +206,7 @@ data CreatedThumbnails =
     -- ^ Thumbnails were created successfully.  If
     -- 'reencodeOriginal' was not 'Never', then the first item of
     -- the list is going to be the reencoded image.
-  deriving (Eq, Show)
+  deriving (Eq, Show, T.Typeable)
 
 
 -- | Information about a generated thumbnail.  Note that if ask
@@ -222,7 +223,7 @@ data Thumbnail =
       -- ^ Release key that may be used to clean up any resources
       -- used by this thumbnail as soon as possible (i.e., before
       -- 'R.runResourceT' finishes).
-    } deriving (Eq, Show)
+    } deriving (Eq, Show, T.Typeable)
 
 
 -- | Hack to allow me to derive 'Show' for data types with fields
