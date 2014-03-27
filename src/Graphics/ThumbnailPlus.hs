@@ -94,7 +94,7 @@ createThumbnails
   :: R.MonadResource m
   => Configuration -- ^ Configuration values (use 'def' for default values).
   -> FilePath      -- ^ Input image file path.
-  -> R.ResourceT m CreatedThumbnails
+  -> m CreatedThumbnails
 createThumbnails conf inputFp = do
   checkRet <- liftIO (checkInput conf inputFp)
   case checkRet of
@@ -121,7 +121,7 @@ doCreateThumbnails
   :: R.MonadResource m
   => Configuration
   -> (FilePath, Size, FileFormat)
-  -> R.ResourceT m CreatedThumbnails
+  -> m CreatedThumbnails
 doCreateThumbnails Configuration {..} (inputFp, inputSize, inputFf) = do
   parentDir <- liftIO temporaryDirectory
   (relTmpDir, tmpDir) <-
@@ -152,7 +152,7 @@ createThumbnail
   => FilePath
   -> GD.Image
   -> (Size, FileFormat)
-  -> R.ResourceT m Thumbnail
+  -> m Thumbnail
 createThumbnail tmpDir inputImg (size@(Size w h), ff) = do
   let template = "thumb-" ++ show w ++ "x" ++ show h ++ "-"
   (relTmpFile, (tmpFp, tmpHandle)) <-
