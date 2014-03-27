@@ -36,12 +36,16 @@ description:
   Please report any vulnerabilities you may find, we take strive
   to make this library suitable for processing arbitrary images.
 
+source-repository head
+  type:     git
+  location: git://github.com/loyful/thumbnail-plus.git
+
 library
   exposed-modules:
     Graphics.ThumbnailPlus
     Graphics.ThumbnailPlus.ImageSize
   build-depends:
-    base         >= 4.6,
+    base         >= 4.6   && < 5,
     bytestring   >= 0.10,
     data-default >= 0.5,
 
