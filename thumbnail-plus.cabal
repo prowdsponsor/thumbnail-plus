@@ -39,7 +39,6 @@ description:
 library
   exposed-modules:
     Graphics.ThumbnailPlus
-  other-modules:
     Graphics.ThumbnailPlus.ImageSize
   build-depends:
     base         >= 4.6,
@@ -57,5 +56,18 @@ library
 
     gd           >= 3000.7.3
   hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options:         -Wall
+
+test-suite runtests
+  type: exitcode-stdio-1.0
+  build-depends:
+    base,
+    conduit,
+
+    thumbnail-plus,
+    hspec           >= 1.9
+  main-is:             Main.hs
+  hs-source-dirs:      tests
   default-language:    Haskell2010
   ghc-options:         -Wall
