@@ -11,10 +11,11 @@ import qualified Graphics.ThumbnailPlus.ImageSize as TPIS
 main :: IO ()
 main = hspec $ do
   describe "sinkImageInfo" $ do
-    it "works for logo.png" $ check (Just (TP.Size 271 61, TP.PNG)) "tests/data/logo.png"
-    it "works for logo.jpg" $ check (Just (TP.Size 271 61, TP.JPG)) "tests/data/logo.jpg"
-    it "works for logo.gif" $ check (Just (TP.Size 271 61, TP.GIF)) "tests/data/logo.gif"
-    it "rejects invalid file" $ check Nothing "tests/Main.hs"
+    it "works for logo.png"    $ check (Just (TP.Size  271   61, TP.PNG)) "tests/data/logo.png"
+    it "works for logo.jpg"    $ check (Just (TP.Size  271   61, TP.JPG)) "tests/data/logo.jpg"
+    it "works for logo.gif"    $ check (Just (TP.Size  271   61, TP.GIF)) "tests/data/logo.gif"
+    it "works for jpg_art.jpg" $ check (Just (TP.Size 1344 1352, TP.JPG)) "tests/data/jpn_art.jpg"
+    it "rejects invalid file"  $ check Nothing "tests/Main.hs"
 
 check :: Maybe (TP.Size, TP.FileFormat) -> FilePath -> Expectation
 check ex fp = do
