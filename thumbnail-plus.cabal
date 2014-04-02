@@ -1,7 +1,7 @@
 name:                thumbnail-plus
-version:             1.0
+version:             1.0.1
 synopsis:            Generate thumbnails easily and safely.
-homepage:            https://github.com/loyful/thumbnail-plus
+homepage:            https://github.com/prowdsponsor/thumbnail-plus
 license:             MIT
 license-file:        LICENSE
 author:              Felipe Lessa, Michael Snoyman
@@ -38,7 +38,7 @@ description:
 
 source-repository head
   type:     git
-  location: git://github.com/loyful/thumbnail-plus.git
+  location: git://github.com/prowdsponsor/thumbnail-plus.git
 
 library
   exposed-modules:
