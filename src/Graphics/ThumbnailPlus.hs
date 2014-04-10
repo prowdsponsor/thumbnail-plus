@@ -138,25 +138,33 @@ doCreateThumbnails Configuration {..} (inputFp, inputSize, inputFf) = do
                        JPG -> GD.loadJpegFile
                        PNG -> GD.loadPngFile)
       gdFreeImage
-  let finalThumbSizes =
-        (case reencodeOriginal of
-           Never            -> id
-           SameFileFormat   -> (:) (inputSize, inputFf)
-           NewFileFormat ff -> (:) (inputSize, ff)) $
-        map (calculateThumbnailSize inputSize *** fromMaybe inputFf) $
-        filter (not . (inputSize `fits`) . fst) $
-        thumbnailSizes
-  thumbnails <- mapM (createThumbnail tmpDir img) finalThumbSizes
-  R.release relImg
-  return (CreatedThumbnails thumbnails (NoShow relTmpDir))
+  imgSize <- liftIO $ do
+    GD.alphaBlending True img
+    GD.imageSize img
+  case (imgSize, inputSize) of
+    ((w1,h1), Size w2 h2) | w1 /= w2 || h1 /= h2 ->
+      -- Sanity check
+      return ImageFormatUnrecognized
+    _ -> do
+      let finalThumbSizes =
+            (case reencodeOriginal of
+               Never            -> id
+               SameFileFormat   -> (:) (inputSize, inputFf)
+               NewFileFormat ff -> (:) (inputSize, ff)) $
+            map (calculateThumbnailSize inputSize *** fromMaybe inputFf) $
+            filter (not . (inputSize `fits`) . fst) $
+            thumbnailSizes
+      thumbnails <- mapM (createThumbnail tmpDir (img, imgSize)) finalThumbSizes
+      R.release relImg
+      return (CreatedThumbnails thumbnails (NoShow relTmpDir))
 
 createThumbnail
   :: R.MonadResource m
   => FilePath
-  -> GD.Image
+  -> (GD.Image, GD.Size)
   -> (Size, FileFormat)
   -> m Thumbnail
-createThumbnail tmpDir inputImg (size@(Size w h), ff) = do
+createThumbnail tmpDir (inputImg, inputImgSize) (size@(Size w h), ff) = do
   let template = "thumb-" ++ show w ++ "x" ++ show h ++ "-"
   (relTmpFile, (tmpFp, tmpHandle)) <-
     R.allocate
@@ -171,7 +179,11 @@ createThumbnail tmpDir inputImg (size@(Size w h), ff) = do
     -- 'R.allocate' because of async exceptions, but it doesn't
     -- matter since hClose-ing twice is harmless.
     IO.hClose tmpHandle
-    GD.withImage (GD.resizeImage w h inputImg) $ \resizedImg ->
+    GD.withImage (GD.newImage (w, h)) $ \resizedImg -> do
+      GD.alphaBlending False resizedImg
+      GD.saveAlpha     True  resizedImg
+      GD.copyRegionScaled (0, 0) inputImgSize inputImg
+                          (0, 0) (w, h)       resizedImg
       (\f -> f tmpFp resizedImg) $
         case ff of
           GIF -> GD.saveGifFile
