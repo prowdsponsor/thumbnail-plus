@@ -55,7 +55,7 @@ library
     conduit           >= 1.1,
     conduit-extra     >= 1.1,
     resourcet         >= 0.4,
-    imagesize-conduit >= 1.0,
+    imagesize-conduit >= 1.0.0.3,
 
     directory,
     temporary         >= 1.2,
