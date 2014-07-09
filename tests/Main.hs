@@ -54,7 +54,7 @@ main = hspec $ do
 
 check :: Maybe (TP.Size, TP.FileFormat) -> FilePath -> Expectation
 check ex fp = do
-  size <- C.runResourceT $ CB.sourceFile fp C.$$ TPIS.sinkImageInfo
+  size <- R.runResourceT $ CB.sourceFile fp C.$$ TPIS.sinkImageInfo
   size `shouldBe` ex
 
 checkThumbnail :: TP.Thumbnail -> Expectation
