@@ -36,6 +36,13 @@ description:
   Please report any vulnerabilities you may find, we take strive
   to make this library suitable for processing arbitrary images.
 
+extra-source-files:
+  README.md
+  tests/data/jpn_art.jpg
+  tests/data/logo.gif
+  tests/data/logo.jpg
+  tests/data/logo.png
+
 source-repository head
   type:     git
   location: git://github.com/prowdsponsor/thumbnail-plus.git
