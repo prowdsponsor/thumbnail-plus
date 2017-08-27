@@ -36,7 +36,7 @@ data Configuration =
   Configuration
     { maxFileSize :: !Integer
       -- ^ Maximum file size in bytes.  Files larger than this
-      -- limit are rejected.  Default: 5 MiB.
+      -- limit are rejected.  Default: 2 MiB.
     , maxImageSize :: !Size
       -- ^ Maximum image size in pixels.  Images which exceed this
       -- limit in any dimension are rejected.  Default: 3000x3000px.
