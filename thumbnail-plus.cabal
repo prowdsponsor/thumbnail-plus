@@ -57,7 +57,7 @@ library
     data-default      >= 0.5,
 
     transformers      >= 0.3,
-    either            >= 4.1,
+    either            >= 4.1 && < 4.5,
 
     conduit           >= 1.1,
     conduit-extra     >= 1.1,
