@@ -15,7 +15,7 @@ import Control.Arrow ((***))
 import Control.Monad (unless)
 import Control.Monad.IO.Class (MonadIO(..))
 import Control.Monad.Trans.Class (lift)
-import Control.Monad.Trans.Either (runEitherT, left, right)
+import Control.Monad.Trans.Except (runExceptT, throwE)
 import Data.Default (Default(..))
 import Data.Maybe (fromMaybe)
 import qualified Control.Exception as E
@@ -108,13 +108,13 @@ checkInput :: Configuration -> FilePath -> IO (Either CreatedThumbnails (Size, F
 checkInput Configuration {..} inputFp =
   -- No resources from the input check are needed to create the
   -- thumbnails, use an inner ResourceT.
-  R.runResourceT $ runEitherT $ do
+  R.runResourceT $ runExceptT $ do
     (_, inputH) <- lift $ R.allocate (IO.openFile inputFp IO.ReadMode) IO.hClose
     fileSize <- liftIO $ IO.hFileSize inputH
-    unless (fileSize <= maxFileSize) $ left (FileSizeTooLarge fileSize)
+    unless (fileSize <= maxFileSize) $ throwE (FileSizeTooLarge fileSize)
     minfo <- CB.sourceHandle inputH C.$$ sinkImageInfo
-    info@(imageSize, _) <- maybe (left ImageFormatUnrecognized) right minfo
-    unless (imageSize `fits` maxImageSize) $ left (ImageSizeTooLarge imageSize)
+    info@(imageSize, _) <- maybe (throwE ImageFormatUnrecognized) return minfo
+    unless (imageSize `fits` maxImageSize) $ throwE (ImageSizeTooLarge imageSize)
     return info
 
 fits :: Size -> Size -> Bool
